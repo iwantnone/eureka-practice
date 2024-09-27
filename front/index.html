@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生信息课程录入</title>
+    <style>
+        form div {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <form>
+        <div>
+            <label for="student_name">学生姓名:</label>
+            <input type="text" id="student_name" name="student_name" required>
+        </div>
+
+        <div>
+            <label for="student_age">学生年龄:</label>
+            <input type="number" id="student_age" name="student_age" required>
+        </div>
+
+        <div>
+            <label for="student_phone">学生手机号码:</label>
+            <input type="tel" id="student_phone" name="student_phone" required>
+        </div>
+
+        <hr />
+
+        <div>
+            <label for="course_name">课程名称:</label>
+            <input type="text" id="course_name" name="course_name" required>
+        </div>
+
+        <div>
+            <label for="course_size">课程节数:</label>
+            <input type="number" id="course_size" name="course_size" required>
+        </div>
+        <button type="button" onclick="submitData()">提交</button>
+    </form>
+
+    <div id="message">
+
+    </div>
+</body>
+<script>
+    function submitData() {
+        // 获取所有数据
+        const studentName = document.getElementById("student_name").value;
+        const studentAge = document.getElementById("student_age").value;
+        const studentPhone = document.getElementById("student_phone").value;
+        const courseName = document.getElementById("course_name").value;
+        const courseSize = document.getElementById("course_size").value;
+
+        // 构建请求数据
+        const data = {
+            student: {
+                name: studentName,
+                age: studentAge,
+                telephone: studentPhone
+            },
+            course: {
+                name: courseName,
+                size: courseSize
+            }
+        };
+
+        // 发送 POST 请求到本机 9999 端口
+        fetch('http://localhost:9999/student/student', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // 假设服务器返回 JSON 数据
+            })
+            .then(responseData => {
+                // 处理服务器返回的数据
+                document.getElementById("message").textContent = "提交成功！服务器返回: " + JSON.stringify(responseData);
+            })
+            .catch(error => {
+                // 处理错误
+                console.error('There has been a problem with your fetch operation:', error);
+                document.getElementById("message").textContent = "提交失败: " + error.message;
+            });
+    }
+</script>
+
+</html>
